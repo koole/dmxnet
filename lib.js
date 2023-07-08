@@ -53,7 +53,7 @@ class dmxnet {
     this.logger.info('started with options: %o', options);
 
     // error function to call on error to avoid unhandled exeptions e.g. in Node-RED
-    this.errFunc = typeof options.errFunc === 'function' ?  options.errFunc : undefined;
+    this.errFunc = typeof options.errFunc === 'function' ? options.errFunc : undefined;
 
     // Get all network interfaces
     this.interfaces = os.networkInterfaces();
@@ -121,7 +121,7 @@ class dmxnet {
         this.logger.verbose('Check controller alive, count ' + this.controllers.length);
         for (var index = 0; index < this.controllers.length; index++) {
           if ((new Date().getTime() -
-              new Date(this.controllers[index].last_poll).getTime()) >
+            new Date(this.controllers[index].last_poll).getTime()) >
             60000) {
             this.controllers[index].alive = false;
           }
@@ -337,6 +337,36 @@ class dmxnet {
       this.artPollReplyCount = 0;
     }
   }
+
+  /** 
+   * Send Sync packet
+   */
+
+  sendSync() {
+    var ArtSyncFormat = '>!7sBHBBBBHHBBHBBH18s64s64sH4B4B4B4B4B3HB6B4BBB';
+    this.ip4.forEach((ip) => {
+      var sourceip = ip.ip;
+      // Send ArtSync to all senders
+      this.senders.forEach((sender) => {
+        var udppacket = Buffer.from(jspack.Pack(
+          ArtSyncFormat,
+          ['Art-Net', 0, 0x0052,
+            // 4 bytes source ip + 2 bytes port
+            sourceip.split('.')[0], sourceip.split('.')[1],
+            sourceip.split('.')[2], sourceip.split('.')[3], this.port,
+            // 2 bytes sequence, physical
+            0, 0,
+          ]));
+        // Send UDP
+        var client = this.socket;
+        client.send(udppacket, 0, udppacket.length, 6454, sender.ip,
+          (err) => {
+            if (err) this.parent.handleError(err);
+            this.logger.debug('ArtSync frame sent');
+          });
+      });
+    });
+  }
 }
 
 /**
@@ -368,8 +398,8 @@ class sender {
     if (this.net > 127) {
       this.handleError(new Error('Invalid Net, must be smaller than 128'));
     }
-    if (this.universe > 15) {
-      this.handleError(new Error('Invalid Universe, must be smaller than 16'));
+    if (this.universe > 63) {
+      this.handleError(new Error('Invalid Universe, must be smaller than 64'));
     }
     if (this.subnet > 15) {
       this.handleError(new Error('Invalid subnet, must be smaller than 16'));
@@ -574,10 +604,10 @@ class receiver extends EventEmitter {
 
     // Validate Input
     if (this.net > 127) {
-      this.parent.handleError( new Error('Invalid Net, must be smaller than 128'));
+      this.parent.handleError(new Error('Invalid Net, must be smaller than 128'));
     }
-    if (this.universe > 15) {
-      this.parent.handleError(new Error('Invalid Universe, must be smaller than 16'));
+    if (this.universe > 31) {
+      this.parent.handleError(new Error('Invalid Universe, must be smaller than 32'));
     }
     if (this.subnet > 15) {
       this.parent.handleError(new Error('Invalid subnet, must be smaller than 16'));
