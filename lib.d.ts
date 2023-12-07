@@ -49,7 +49,7 @@ declare class sender {
   /**
    * Transmits the current values
    */
-  transmit(): void;
+  transmit(callback?: () => void): void;
   transmitSync(): void;
   /**
    * Sets a single channel to a value and transmits the change
