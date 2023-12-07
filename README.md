@@ -16,6 +16,7 @@ dmxnet is an ArtNet-DMX-sender and receiver for nodejs
 ## Features
 
 - Send DMX-Data as ArtNet
+- Send ArtSync
 - Use multiple senders with different Net, Subnet and Universe-Settings
 - Receive ArtNet-Data
 - Use multiple receivers with different Net, Subnet and Universe
@@ -181,6 +182,14 @@ sender.transmit();
 ```
 
 Transmits a new ArtDMX Frame manually.
+
+**Transmit ArtSync:**
+
+```javascript
+sender.transmitSync();
+```
+
+Transmits a new ArtSync packet.
 
 **Reset:**
 
