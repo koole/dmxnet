@@ -50,6 +50,7 @@ declare class sender {
    * Transmits the current values
    */
   transmit(): void;
+  transmitSync(): void;
   /**
    * Sets a single channel to a value and transmits the change
    *
@@ -172,11 +173,6 @@ declare class dmxnet {
    * Builds and sends an ArtPollReply-Packet
    */
   ArtPollReply(): void;
-
-  /**
-   * Send Sync packet
-   */
-  sendSync(): void;
 }
 
 export type { sender, receiver };
