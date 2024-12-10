@@ -505,7 +505,7 @@ class sender {
     this.subuni = options.subuni;
     this.ip = options.ip || "255.255.255.255";
     this.port = options.port || 6454;
-    this.base_refresh_interval = options.base_refresh_interval || 1000;
+    this.base_refresh_interval = 'base_refresh_interval' in options ? options.base_refresh_interval : 1000;
 
     // Validate Input
     if (this.net > 127) {
