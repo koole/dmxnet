@@ -511,8 +511,8 @@ class sender {
     if (this.net > 127) {
       this.handleError(new Error("Invalid Net, must be smaller than 128"));
     }
-    if (this.universe > 63) {
-      this.handleError(new Error("Invalid Universe, must be smaller than 64"));
+    if (this.universe > 32767) {
+      this.handleError(new Error("Invalid Universe, must be smaller than 32768"));
     }
     if (this.subnet > 15) {
       this.handleError(new Error("Invalid subnet, must be smaller than 16"));
